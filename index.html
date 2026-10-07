@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Queue</title>
+<meta name="color-scheme" content="light">
+<style>
+:root{--bg:#ffffff;--fg:#12324a;--mut:#6f8aa0;--card:#ffffff;--line:#d3e6f5;--acc:#3a9ae0;--onacc:#ffffff;--tint:#eaf5fd;--ok:#1f9d55;--warn:#d97706;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.4 -apple-system,"Helvetica Neue",Arial,sans-serif;min-height:100vh}
+main{max-width:560px;margin:0 auto;padding:20px}
+nav{display:flex;gap:6px;margin-bottom:28px;border-bottom:1px solid var(--line)}
+nav button{flex:1;background:none;border:0;padding:12px;font:inherit;color:var(--mut);border-bottom:2px solid transparent;cursor:pointer}
+nav button.on{color:var(--acc);border-color:var(--acc);font-weight:600}
+h1{font-size:28px;margin:0 0 4px;font-weight:600}
+.sub{color:var(--mut);margin:0 0 24px}
+.now{text-align:center;padding:20px;border:1px solid var(--line);border-radius:16px;background:var(--tint);margin-bottom:24px}
+.now small{color:var(--mut);text-transform:uppercase;letter-spacing:.1em;font-size:12px}
+.now b{display:block;font-size:56px;font-weight:700;letter-spacing:-.02em}
+label{display:block;font-size:13px;color:var(--mut);margin:16px 0 6px}
+input{width:100%;padding:16px;font:inherit;font-size:18px;border:1px solid var(--line);border-radius:12px;background:var(--card);color:var(--fg)}
+input:focus{outline:2px solid var(--acc);outline-offset:-1px}
+.size{display:flex;gap:8px;flex-wrap:wrap}
+.size button{flex:1;min-width:48px;padding:14px 0;font:inherit;font-size:18px;border:1px solid var(--line);border-radius:12px;background:var(--card);color:var(--fg);cursor:pointer}
+.size button.on{background:var(--acc);color:var(--onacc);border-color:var(--acc)}
+.btn{width:100%;margin-top:24px;padding:18px;font:inherit;font-size:18px;font-weight:600;border:0;border-radius:12px;background:var(--acc);color:var(--onacc);cursor:pointer}
+.btn.sm{width:auto;margin:0;padding:9px 14px;font-size:14px;border-radius:9px}
+.btn.ghost{background:none;color:var(--fg);border:1px solid var(--line)}
+.btn.wa{background:var(--ok);color:#fff}
+.ticket{text-align:center;padding:40px 20px}
+.ticket b{display:block;font-size:96px;line-height:1;margin:16px 0;letter-spacing:-.03em}
+.row{display:flex;align-items:center;gap:12px;padding:14px 0;border-bottom:1px solid var(--line)}
+.row .n{font-weight:700;font-size:20px;width:64px}
+.row .i{flex:1;min-width:0}.row .i div{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row .i span{color:var(--mut);font-size:13px}
+.row .a{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.tag{font-size:12px;color:var(--warn);font-weight:600}
+.empty{color:var(--mut);text-align:center;padding:40px 0}
+.hide{display:none}
+.copy{margin:40px 0 8px;text-align:center;color:var(--mut);font-size:13px}
+.foot{margin-top:32px;text-align:center}
+.foot a{color:var(--mut);font-size:13px;cursor:pointer;text-decoration:underline}
+</style></head><body><main>
+<nav><button id="t1" class="on" onclick="tab(1)">Check in</button><button id="t2" onclick="tab(2)">Staff</button></nav>
+<div id="v1"></div><div id="v2" class="hide"></div>
+<div class="copy">© @coffeeman</div>
+</main>
+<script>
+const K='queue-v1';let S={n:0,list:[]},size=2,view=1,ticket=null,timer;
+try{const r=localStorage.getItem(K);if(r)S=JSON.parse(r)}catch(e){}
+const save=()=>{try{localStorage.setItem(K,JSON.stringify(S))}catch(e){}};
+const $=id=>document.getElementById(id);
+const esc=s=>s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const num=n=>'A'+String(n).padStart(3,'0');
+const waiting=()=>S.list.filter(q=>q.s==='waiting');
+const calling=()=>S.list.filter(q=>q.s==='called');
+function phone(p){let d=p.replace(/\D/g,'');if(d.startsWith('0'))d='60'+d.slice(1);return d}
+function nowHTML(){const c=calling().map(q=>num(q.n)).join(' · ')||'—';return `<div class="now"><small>Now calling</small><b>${c}</b></div>`}
+function tab(t){view=t;$('t1').className=t==1?'on':'';$('t2').className=t==2?'on':'';$('v1').className=t==1?'':'hide';$('v2').className=t==2?'':'hide';render()}
+function render(){clearTimeout(timer);view==1?r1():r2()}
+function r1(){
+ if(ticket){const q=S.list.find(x=>x.n===ticket);const ahead=waiting().filter(x=>x.n<ticket).length;
+  $('v1').innerHTML=`<div class="ticket"><p class="sub">Your number</p><b>${num(ticket)}</b><p>${ahead} ${ahead==1?'group':'groups'} ahead of you.<br>We'll WhatsApp you when your table is ready.</p><button class="btn ghost" onclick="ticket=null;render()">Done</button></div>`;
+  timer=setTimeout(()=>{ticket=null;render()},10000);return}
+ $('v1').innerHTML=`<h1>Join the queue</h1><p class="sub">${waiting().length} waiting</p>${nowHTML()}
+ <label>Name</label><input id="nm" placeholder="Your name" autocomplete="off">
+ <label>WhatsApp number</label><input id="ph" type="tel" inputmode="tel" placeholder="012 345 6789">
+ <label>Party size</label><div class="size" id="sz">${[1,2,3,4,5,6,'7+'].map((s,i)=>`<button class="${(i+1)==size?'on':''}" onclick="size=${i+1};[...$('sz').children].forEach((b,j)=>b.className=j==${i}?'on':'')">${s}</button>`).join('')}</div>
+ <button class="btn" onclick="join()">Get my number</button>`}
+function join(){const nm=$('nm').value.trim(),ph=phone($('ph').value);
+ if(!nm){$('nm').focus();return}if(ph.length<9){$('ph').focus();return}
+ S.n++;S.list.push({n:S.n,name:nm,ph,size,s:'waiting',t:Date.now()});save();ticket=S.n;render()}
+function msg(q){return `Hi ${q.name}, your table is ready! Your number ${num(q.n)} is being called. Please come to the front desk within 5 minutes.`}
+function wa(q){window.open(`https://wa.me/${q.ph}?text=${encodeURIComponent(msg(q))}`,'_blank')}
+function act(n,a){const q=S.list.find(x=>x.n===n);if(!q)return;
+ if(a==='call'){q.s='called';save();wa(q)}
+ else if(a==='wa')wa(q);
+ else if(a==='seat')q.s='seated';
+ else if(a==='skip')q.s='skipped';
+ save();render()}
+function next(){const q=waiting()[0];if(q)act(q.n,'call')}
+function r2(){
+ const act_=S.list.filter(q=>q.s==='waiting'||q.s==='called');
+ $('v2').innerHTML=`<h1>Queue</h1><p class="sub">${waiting().length} waiting · ${calling().length} called</p>${nowHTML()}
+ <button class="btn" style="margin:0 0 16px" onclick="next()" ${waiting().length?'':'disabled'}>Call next &amp; WhatsApp</button>
+ ${act_.length?act_.map(q=>`<div class="row"><div class="n">${num(q.n)}</div><div class="i"><div>${esc(q.name)}</div><span>${q.size} pax · ${Math.round((Date.now()-q.t)/60000)} min${q.s==='called'?' · <span class="tag">CALLED</span>':''}</span></div>
+ <div class="a">${q.s==='waiting'?`<button class="btn sm" onclick="act(${q.n},'call')">Call</button>`:`<button class="btn sm wa" onclick="act(${q.n},'wa')">WhatsApp</button><button class="btn sm" onclick="act(${q.n},'seat')">Seat</button>`}<button class="btn sm ghost" onclick="act(${q.n},'skip')">${q.s==='called'?'No show':'Skip'}</button></div></div>`).join(''):'<div class="empty">No one in queue</div>'}
+ <div class="foot"><a onclick="if(confirm('Clear queue and reset numbers?')){S={n:0,list:[]};save();render()}">Reset for new day</a></div>`;
+ timer=setTimeout(r2,30000)}
+render();
+</script></body></html>
