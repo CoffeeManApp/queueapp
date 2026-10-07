@@ -39,7 +39,7 @@ If you clear browser cache or use another device, the queue will not carry over.
 
 ## 🌐 The app link
 
-👉 [Click here to use the app](https://coffeemanapp.github.io/restaurantqueue/)
+👉 [Click here to use the app]((https://coffeemanapp.github.io/queueapp/index.html))
 
 📲 Add to Home Screen (For Easy Access)
 You can install this app like a native app on your phone or iPad! Here's how:  
@@ -104,7 +104,7 @@ Tap Add to Home screen. Confirm by tapping Add.
 
 ## 🌐 应用链接
 
-👉 [点击这里即可使用](https://coffeemanapp.github.io/restaurantqueue/)
+👉 [点击这里即可使用]((https://coffeemanapp.github.io/queueapp/index.html))
 
 ## 📲 添加到手机主屏幕（更方便访问）
 你可以像安装原生应用一样，把它装到手机或 iPad 桌面！方法如下：  
