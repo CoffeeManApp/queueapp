@@ -39,10 +39,41 @@ input:focus{outline:2px solid var(--acc);outline-offset:-1px}
 .copy{margin:40px 0 8px;text-align:center;color:var(--mut);font-size:13px}
 .foot{margin-top:32px;text-align:center}
 .foot a{color:var(--mut);font-size:13px;cursor:pointer;text-decoration:underline}
+ /* Trip.com Advertisement */
+.ad-container {
+    width: 100%;
+    max-width: 468px;
+    min-height: 60px;
+    margin: 24px auto 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+.ad-container iframe {
+    display: block;
+    width: 468px;
+    height: 60px;
+    max-width: 100%;
+    border: none;
+}
 </style></head><body><main>
 <nav><button id="t1" class="on" onclick="tab(1)">Check in</button><button id="t2" onclick="tab(2)">Staff</button></nav>
 <div id="v1"></div><div id="v2" class="hide"></div>
-<div class="copy">© @coffeeman</div>
+<div class="copy">©coffeeman</div>
+ <!-- Trip.com Affiliate Advertisement -->
+    <div class="ad-container">
+        <iframe
+            src="https://www.trip.com/partners/ad/DB20485425?Allianceid=3821620&amp;SID=21714802&amp;trip_sub1="
+            width="468"
+            height="60"
+            frameborder="0"
+            scrolling="no"
+            title="Trip.com travel advertisement"
+            id="DB20485425">
+        </iframe>
+    </div>
 </main>
 <script>
 const K='queue-v1';let S={n:0,list:[]},size=2,view=1,ticket=null,timer;
